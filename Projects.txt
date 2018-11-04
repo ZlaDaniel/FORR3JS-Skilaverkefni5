@@ -1,0 +1,59 @@
+1. Javascript Drum Kit
+
+<script>
+  function removeTransition(e) {
+    if (e.propertyName !== 'transform') return;
+    e.target.classList.remove('playing');// tekur orðið playing úr divinu sem var verið að nota
+  }
+  function playSound(e) {
+    const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);// ef notandi slær á takkan a verður breytan audio þar sem data-key er "65"
+    const key = document.querySelector(`div[data-key="${e.keyCode}"]`);//  ef notandi slær á takkan a verður breytan key þar sem data-key er "65"
+    if (!audio) return;// ef ekkert audio er tengt við takkan sem ýtt er á verður key = null
+    key.classList.add('playing');// Bætir orðinu playing við classið key þar sem data-key er það sama og notandi sló á lyklaborðið
+    audio.currentTime = 0;// alltaf þegar ýtt er á ehv takka stoppar hljóðið sem var í gangi
+    audio.play(); // spilar hljóðskránna sem er tengd við ákveðinn lykil á lyklaborðinu
+  }
+  const keys = Array.from(document.querySelectorAll('.key'));// býr til fylki með ollum key
+  keys.forEach(key => key.addEventListener('transitionend', removeTransition));// framkvæmir removeTransition functionið í hvert sinn sem klasinn key breytist
+  window.addEventListener('keydown', playSound); // þegar ýtt er á ehv takka framkvæmum við playSound functionið
+</script>
+
+12. Key Sequence Detection
+
+const pressed = []; // býr til arrayið pressed
+const secretCode = 'wesbos'; // þetta er combinationið sem við erum að leita af "wesbos"
+window.addEventListener('keyup', (e) => {
+  console.log(e.key); // prentar út alla lykla sem ýtt er á, í console
+  pressed.push(e.key);// bætir takka sem ýtt er á inn í arrayið pressed
+  pressed.splice(-secretCode.length - 1, pressed.length - secretCode.length);// lætur array alltaf vera jafn stórt og secretCode
+  if (pressed.join('').includes(secretCode)) { //pressed.join lætur fylkið verða að streng með engum bilum. og svo er skoðað hvort strengurinn sé sama og secredCode
+    console.log('DING DING!');// birtir DING DING! í console ef rétt comnbination er stimplað inn
+    cornify_add(); //bætir við einhyrningum á skjáinn hjá notanda hahahah
+  }
+  console.log(pressed);//fylkið er prentað í hvert skipti sem ýtt er á takka
+});
+
+16. CSS Text Shadow Mouse Move Effect
+
+const hero = document.querySelector('.hero');
+  const text = hero.querySelector('h1');
+  const walk = 500; // 500px //breyta sem ákveður hvað skuggin fer langt frá upprunalega textanum
+  function shadow(e) {
+    const { offsetWidth: width, offsetHeight: height } = hero;
+    let { offsetX: x, offsetY: y } = e;// fær gildi frá hvar músin er á skjánum
+    if (this !== e.target) {// lagar þar sem að þar sem textinn er byrjar x og y gildið ekki í 0 heldur heldur áfram
+      x = x + e.target.offsetLeft;
+      y = y + e.target.offsetTop;
+    }
+    const xWalk = Math.round((x / width * walk) - (walk / 2));//lætur xwalk vera -250 þegar mus er alveg til vinstri, 250 þegar mus er alveg til hægri og 0 þeagar mus er i miðju og allt svo á milli
+    const yWalk = Math.round((y / height * walk) - (walk / 2));//lætur ywalk vera -250 þegar mus er alveg til vinstri, 250 þegar mus er alveg til hægri og 0 þeagar mus er i miðju og allt svo á milli
+    text.style.textShadow = `
+      ${xWalk}px ${yWalk}px 0 rgba(255,0,255,0.7),// skuggi eitt í ákveðnum lit, fylgir mús í x og y
+      ${xWalk * -1}px ${yWalk}px 0 rgba(0,255,255,0.7),// skuggi tvö í ákveðnum lit, fylgir mús í y en fer á móti mús í x
+      ${yWalk}px ${xWalk * -1}px 0 rgba(0,255,0,0.7),// skuggi þrju í ákveðnum lit, þegar mús er í + á x færist skuggi í - á y og öfugt
+      ${yWalk * -1}px ${xWalk}px 0 rgba(0,0,255,0.7)// skuggi fjogur í ákveðnum lit, þegar mús er í + á x færist skuggi í + á y og öfugt
+    `;
+  }
+  hero.addEventListener('mousemove', shadow);
+
+
